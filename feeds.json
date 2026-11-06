@@ -1,0 +1,13 @@
+{
+  "_comment": "Add your own feeds here. Each feed needs a name, a url (RSS/Atom), and a sport tag. Restart the server after editing.",
+  "feeds": [
+    {"name": "ESPN NFL",        "sport": "nfl",    "url": "https://www.espn.com/espn/rss/nfl/news"},
+    {"name": "ESPN NBA",        "sport": "nba",    "url": "https://www.espn.com/espn/rss/nba/news"},
+    {"name": "ESPN MLB",        "sport": "mlb",    "url": "https://www.espn.com/espn/rss/mlb/news"},
+    {"name": "ESPN NHL",        "sport": "nhl",    "url": "https://www.espn.com/espn/rss/nhl/news"},
+    {"name": "ESPN Soccer",     "sport": "soccer", "url": "https://www.espn.com/espn/rss/soccer/news"},
+    {"name": "CBS Sports NFL",  "sport": "nfl",    "url": "https://www.cbssports.com/rss/headlines/nfl/"},
+    {"name": "CBS Sports NBA",  "sport": "nba",    "url": "https://www.cbssports.com/rss/headlines/nba/"},
+    {"name": "BBC Football",    "sport": "soccer", "url": "https://feeds.bbci.co.uk/sport/football/rss.xml"}
+  ]
+}

@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: sports-news-mcp
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: python server.py
+    healthCheckPath: /
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.7
+      - key: CACHE_SECONDS
+        value: "60"
