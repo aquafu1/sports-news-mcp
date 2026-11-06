@@ -11,11 +11,19 @@ Feeds are cached for 60 seconds, so Claude never sees news more than about a min
 
 ## Add your own feeds
 
-Edit `feeds.json`. Every entry needs a `name`, a `sport` tag and an RSS or Atom `url`:
+Edit `feeds.json`. Every entry needs a `name`, a `sport` tag and a `url`. The optional `type` field says how to read it:
+
+| type | what it reads | example |
+|---|---|---|
+| `rss` (default) | RSS or Atom feeds | ESPN, CBS, BBC |
+| `json` | JSON news feeds | `https://www.fotmob.com/topnews/feed` |
+| `realapp` | a realapp.com sport page (scraped) | `https://www.realapp.com/nba` |
 
 ```json
-{"name": "RotoWire NBA", "sport": "nba", "url": "https://..."}
+{"name": "Real NBA", "sport": "nba", "type": "realapp", "url": "https://www.realapp.com/nba", "cache_seconds": 180}
 ```
+
+The Real pages have no feed, so the server scrapes their HTML. If Real changes its layout, that source will show up under `feed_errors` with "layout may have changed" while the other sources keep working. Real's birthday posts ("X Turns 25") are skipped.
 
 ## Deploy on Render (free)
 

@@ -1,5 +1,5 @@
 {
-  "_comment": "Add your own feeds here. Each feed needs a name, a url (RSS/Atom), and a sport tag. Restart the server after editing.",
+  "_comment": "Each source needs a name, a url and a sport tag. type is rss (default), json (e.g. FotMob) or realapp (a realapp.com sport page). cache_seconds is optional. Restart the server after editing.",
   "feeds": [
     {"name": "ESPN NFL",        "sport": "nfl",    "url": "https://www.espn.com/espn/rss/nfl/news"},
     {"name": "ESPN NBA",        "sport": "nba",    "url": "https://www.espn.com/espn/rss/nba/news"},
@@ -8,6 +8,14 @@
     {"name": "ESPN Soccer",     "sport": "soccer", "url": "https://www.espn.com/espn/rss/soccer/news"},
     {"name": "CBS Sports NFL",  "sport": "nfl",    "url": "https://www.cbssports.com/rss/headlines/nfl/"},
     {"name": "CBS Sports NBA",  "sport": "nba",    "url": "https://www.cbssports.com/rss/headlines/nba/"},
-    {"name": "BBC Football",    "sport": "soccer", "url": "https://feeds.bbci.co.uk/sport/football/rss.xml"}
+    {"name": "BBC Football",    "sport": "soccer", "url": "https://feeds.bbci.co.uk/sport/football/rss.xml"},
+
+    {"name": "FotMob",          "sport": "soccer", "type": "json", "url": "https://www.fotmob.com/topnews/feed", "link_base": "https://www.fotmob.com/"},
+
+    {"name": "Real NBA",        "sport": "nba",    "type": "realapp", "url": "https://www.realapp.com/nba",    "cache_seconds": 180},
+    {"name": "Real NFL",        "sport": "nfl",    "type": "realapp", "url": "https://www.realapp.com/nfl",    "cache_seconds": 180},
+    {"name": "Real Soccer",     "sport": "soccer", "type": "realapp", "url": "https://www.realapp.com/soccer", "cache_seconds": 180},
+    {"name": "Real MLB",        "sport": "mlb",    "type": "realapp", "url": "https://www.realapp.com/mlb",    "cache_seconds": 180},
+    {"name": "Real NHL",        "sport": "nhl",    "type": "realapp", "url": "https://www.realapp.com/nhl",    "cache_seconds": 180}
   ]
 }
