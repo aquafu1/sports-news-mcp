@@ -73,7 +73,7 @@ URL_SPORT_SEGMENTS = {
 }
 
 # Real's pages are full of "X Turns 25" birthday posts. Not news.
-REALAPP_SKIP = re.compile(r"\bTurns \d{1,2}\b", re.IGNORECASE)
+REALAPP_SKIP = re.compile(r"\bTurns \d{1,2}\b|^.{2,60} (@|vs\.?|v) .{2,60}$", re.IGNORECASE)
 
 mcp = MCPServer(
     name="sports-news",
@@ -230,7 +230,11 @@ def _find_article_lists(node, depth: int = 0) -> list[list[dict]]:
 
 
 def parse_json_feed(feed: dict, body: bytes, now: float) -> list[dict]:
-    data = json.loads(body)
+    try:
+        data = json.loads(body)
+    except ValueError:
+        snippet = re.sub(r"\s+", " ", body[:120].decode("utf-8", "replace"))
+        raise ValueError(f"not JSON ({len(body)} bytes): {snippet!r}")
     lists = _find_article_lists(data)
     if not lists:
         raise ValueError("no articles found in JSON (format may have changed)")
@@ -311,17 +315,15 @@ def parse_realapp(feed: dict, body: bytes, now: float) -> list[dict]:
             except ValueError:
                 day = None
             if day:
-                # Pages only give the day. Use first-seen time if it falls on that
-                # day (US Central), otherwise the end of that day.
-                start = day.replace(tzinfo=timezone.utc).timestamp() + 6 * 3600
-                end = start + 86399
-                ts = max(start, min(_seen(link, now), end))
+                # Pages only give the day: place it mid-day (capped at now), in page order.
+                start = day.replace(tzinfo=timezone.utc).timestamp() + 6 * 3600  # US Central midnight
+                ts = min(start + 12 * 3600, now) - len(items) * 60
         else:
             title = _REAL_TAIL_NODATE.sub("", text).strip()
-            ts = _seen(link, now)
+            ts = now - 6 * 3600 - len(items) * 60  # undated: assume a few hours old, keep page order
         if not title or REALAPP_SKIP.search(title):
             continue
-        items.append(_item(feed, title, "", link, ts))
+        items.append(_item(feed, title, "", link, ts, date_only=True))
     if not items:
         raise ValueError("no stories found on page (layout may have changed)")
     return items
@@ -339,8 +341,13 @@ async def _fetch_feed(client: httpx.AsyncClient, feed: dict) -> list[dict]:
     parser = PARSERS.get(feed.get("type", "rss"))
     if parser is None:
         return [{"error": f"{feed.get('name', url)}: unknown type {feed.get('type')!r}"}]
+    headers = None
+    if feed.get("type") == "json":
+        headers = {"Accept": "application/json, text/plain, */*",
+                   "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 14_0) AppleWebKit/537.36 "
+                                 "(KHTML, like Gecko) Chrome/130.0 Safari/537.36"}
     try:
-        resp = await client.get(url)
+        resp = await client.get(url, headers=headers)
         resp.raise_for_status()
         items = parser(feed, resp.content, time.time())
     except Exception as exc:  # one bad feed shouldn't break the rest
